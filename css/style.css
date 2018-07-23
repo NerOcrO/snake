@@ -1,0 +1,46 @@
+@font-face {
+  font-family: eightiesFont;
+  src: url(../font/prstart.ttf);
+}
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: eightiesFont;
+  font-size: .8rem;
+  margin-top: 5px;
+}
+fieldset {
+  border: 1px solid #ff4081;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 10px;
+}
+legend {
+  margin: 0;
+}
+label {
+  margin-top: .5rem;
+}
+canvas {
+  border: 1px solid #ff4081;
+  border-radius: 5px;
+}
+#highScore,
+#score,
+#timer {
+  display: block;
+  font-size: 1rem;
+  text-align: right;
+}
+#highScore span {
+  color: #00ff00;
+}
+#score span,
+#timer span {
+  color: #ff4081;
+}
+.arrow {
+  font-size: 3rem;
+  line-height: .5;
+  text-align: center;
+}

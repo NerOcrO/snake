@@ -1,0 +1,23 @@
+{
+  "name": "snake",
+  "version": "1.0.0",
+  "description": "Snake game",
+  "main": "dist/index.html",
+  "scripts": {
+    "build": "rm -rf dist && ./node_modules/parcel-bundler/bin/cli.js index.html",
+    "start": "rm -rf dist && ./node_modules/parcel-bundler/bin/cli.js build index.html"
+  },
+  "keywords": [],
+  "author": "NerOcrO",
+  "license": "MIT",
+  "dependencies": {
+    "parcel-bundler": "^1.9.7"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.0",
+    "eslint-plugin-react": "^7.10.0"
+  }
+}

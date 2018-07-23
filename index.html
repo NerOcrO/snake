@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Snake</title>
+    <link rel="icon" href="favicon.png" type="image/x-icon">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2">
+          <form class="form-horizontal">
+            <fieldset>
+              <legend>Score</legend>
+              <strong id="highScore">🏆 00000<span>0</span></strong>
+              <strong id="score">00000<span>0</span></strong>
+            </fieldset>
+            <fieldset>
+              <legend>Timer</legend>
+              <strong id="timer"><span>00</span>:<span>00</span>:<span>00</span></strong>
+            </fieldset>
+            <fieldset>
+              <legend title="Commands">Cmands</legend>
+              <div class="arrow">🠹</div>
+              <div class="arrow">🠸🠻🠺</div>
+            </fieldset>
+            <fieldset>
+              <legend>Colors</legend>
+              <label for="backgroundColor">Background</label>
+              <input type="color" name="background" class="form-control" id="backgroundColor" value="#000" title="#000">
+              <label for="gridColor">Grid</label>
+              <input type="color" name="grid" class="form-control" id="gridColor" value="#171717" title="#171717">
+              <label for="snakeColor">Snake</label>
+              <input type="color" name="snake" class="form-control" id="snakeColor" value="#00ff00" title="#00ff00">
+              <label for="appleColor">Apple</label>
+              <input type="color" name="apple" class="form-control" id="appleColor" value="#ff0000" title="#ff0000">
+            </fieldset>
+            <fieldset>
+              <legend>Snake</legend>
+              <label for="squareSize">Square</label>
+              <select class="form-control form-control-sm" id="squareSize">
+                <option value="10" selected="selected">10</option>
+                <option value="12">12</option>
+                <option value="14">14</option>
+                <option value="16">16</option>
+                <option value="18">18</option>
+                <option value="20">20</option>
+                <option value="22">22</option>
+                <option value="24">24</option>
+                <option value="26">26</option>
+                <option value="28">28</option>
+                <option value="30">30</option>
+              </select>
+              <label for="marginSize">Margin</label>
+              <select class="form-control form-control-sm" id="marginSize">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2" selected="selected">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+              </select>
+              <label for="tailSize">Tail</label>
+              <select class="form-control form-control-sm" id="tailSize">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected="selected">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+              <label for="speed">Speed</label>
+              <select class="form-control form-control-sm" id="speed">
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="35">35</option>
+                <option value="40">40</option>
+                <option value="45">45</option>
+                <option value="50">50</option>
+                <option value="55">55</option>
+                <option value="60" selected="selected">60</option>
+              </select>
+            </fieldset>
+          </form>
+        </div>
+        <div class="col-md-8">
+          <canvas width="900" height="900">Votre navigateur ne supporte pas la balise canvas.</canvas>
+        </div>
+      </div>
+    </div>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="javascripts/snake.js"></script>
+  </body>
+</html>
