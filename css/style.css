@@ -42,5 +42,7 @@ canvas {
 .arrow {
   font-size: 3rem;
   line-height: .5;
+}
+.center {
   text-align: center;
 }

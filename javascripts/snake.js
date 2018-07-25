@@ -24,8 +24,8 @@ let appleX = randomPlace()
 let appleY = randomPlace()
 let snakeX = squareSize / 2
 let snakeY = squareSize / 2
-let velocityX = 0
-let velocityY = 0
+let directionX = 0
+let directionY = 0
 let tail = tailSize
 let isPaused = false
 let isLaunched = false
@@ -49,8 +49,8 @@ const createGrid = () => {
 }
 
 const createSnake = () => {
-  snakeX += velocityX
-  snakeY += velocityY
+  snakeX += directionX
+  snakeY += directionY
 
   if (snakeX < 0) {
     snakeX = squareSize - 1
@@ -136,7 +136,7 @@ const game = () => {
   }
 }
 
-const setReady = () => {
+const isReady = () => {
   if (!isLaunched) {
     isLaunched = !isLaunched
     initDate = getNow()
@@ -146,28 +146,28 @@ const setReady = () => {
 const keyDown = (event) => {
   if (!isPaused) {
     if (event.keyCode === leftArrowKeyCode && keyPressed !== rightArrowKeyCode) {
-      velocityX = -1
-      velocityY = 0
+      directionX = -1
+      directionY = 0
       keyPressed = event.keyCode
-      setReady()
+      isReady()
     }
     else if (event.keyCode === rightArrowKeyCode && keyPressed !== leftArrowKeyCode) {
-      velocityX = 1
-      velocityY = 0
+      directionX = 1
+      directionY = 0
       keyPressed = event.keyCode
-      setReady()
+      isReady()
     }
     else if (event.keyCode === upArrowKeyCode && keyPressed !== downArrowKeyCode) {
-      velocityX = 0
-      velocityY = -1
+      directionX = 0
+      directionY = -1
       keyPressed = event.keyCode
-      setReady()
+      isReady()
     }
     else if (event.keyCode === downArrowKeyCode && keyPressed !== upArrowKeyCode) {
-      velocityX = 0
-      velocityY = 1
+      directionX = 0
+      directionY = 1
       keyPressed = event.keyCode
-      setReady()
+      isReady()
     }
   }
 
