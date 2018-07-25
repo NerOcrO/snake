@@ -46,3 +46,8 @@ canvas {
 .center {
   text-align: center;
 }
+.github {
+  left: 0;
+  position: absolute;
+  top: 0;
+}
