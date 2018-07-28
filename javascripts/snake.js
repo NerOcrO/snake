@@ -23,12 +23,11 @@ let appleX = randomPlace()
 let appleY = randomPlace()
 let snakeX = squareSize / 2
 let snakeY = squareSize / 2
-let directionX = 0
-let directionY = 0
 let tail = tailSize
 let isPaused = false
 let isLaunched = false
-let keyPressed = ''
+let oldDirection = ''
+let newDirection = ''
 let initDate = 0
 let pauseDate = 0
 let cumuldiffPause = 0
@@ -48,19 +47,32 @@ const createGrid = () => {
 }
 
 const createSnake = () => {
-  snakeX += directionX
-  snakeY += directionY
+  if (newDirection === 'ArrowLeft') {
+    snakeX += -1
+  }
+  else if (newDirection === 'ArrowRight') {
+    snakeX += 1
+  }
+  else if (newDirection === 'ArrowUp') {
+    snakeY += -1
+  }
+  else if (newDirection === 'ArrowDown') {
+    snakeY += 1
+  }
 
+  oldDirection = newDirection
+
+  // Walkthrough the wall.
   if (snakeX < 0) {
     snakeX = squareSize - 1
   }
-  if (snakeX > squareSize - 1) {
+  else if (snakeX > squareSize - 1) {
     snakeX = 0
   }
-  if (snakeY < 0) {
+  else if (snakeY < 0) {
     snakeY = squareSize - 1
   }
-  if (snakeY > squareSize - 1) {
+  else if (snakeY > squareSize - 1) {
     snakeY = 0
   }
 
@@ -135,7 +147,7 @@ const game = () => {
   }
 }
 
-const isReady = () => {
+const isGameLaunched = () => {
   if (!isLaunched) {
     isLaunched = !isLaunched
     initDate = getNow()
@@ -144,29 +156,21 @@ const isReady = () => {
 
 const keyDown = (event) => {
   if (!isPaused) {
-    if (event.code === 'ArrowLeft' && keyPressed !== 'ArrowRight') {
-      directionX = -1
-      directionY = 0
-      keyPressed = event.code
-      isReady()
+    if (event.code === 'ArrowLeft' && oldDirection !== 'ArrowRight') {
+      newDirection = event.code
+      isGameLaunched()
     }
-    else if (event.code === 'ArrowRight' && keyPressed !== 'ArrowLeft') {
-      directionX = 1
-      directionY = 0
-      keyPressed = event.code
-      isReady()
+    else if (event.code === 'ArrowRight' && oldDirection !== 'ArrowLeft') {
+      newDirection = event.code
+      isGameLaunched()
     }
-    else if (event.code === 'ArrowUp' && keyPressed !== 'ArrowDown') {
-      directionX = 0
-      directionY = -1
-      keyPressed = event.code
-      isReady()
+    else if (event.code === 'ArrowUp' && oldDirection !== 'ArrowDown') {
+      newDirection = event.code
+      isGameLaunched()
     }
-    else if (event.code === 'ArrowDown' && keyPressed !== 'ArrowUp') {
-      directionX = 0
-      directionY = 1
-      keyPressed = event.code
-      isReady()
+    else if (event.code === 'ArrowDown' && oldDirection !== 'ArrowUp') {
+      newDirection = event.code
+      isGameLaunched()
     }
   }
 
