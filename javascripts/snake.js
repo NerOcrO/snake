@@ -3,13 +3,17 @@
 import { $, getNow, setHighScore, fillHighScore } from './utils'
 import load from './configuration'
 
-const squareSize = $('#squareSize').value
-const margin = $('#marginSize').value
-const tailSize = $('#tailSize').value
-const speed = $('#speed').value
 const score = $('#score')
 const scoreValue = score.innerHTML
 const timer = $('#timer')
+const backgroundColor = $('#backgroundColor').value
+const gridColor = $('#gridColor').value
+const snakeColor = $('#snakeColor').value
+const appleColor = $('#appleColor').value
+const squareSize = $('#squareSize').value
+const marginSize = $('#marginSize').value
+const tailSize = $('#tailSize').value
+const speed = $('#speed').value
 const context = $('canvas').getContext('2d')
 const squarePow = squareSize ** 2
 const trail = []
@@ -30,16 +34,16 @@ let pauseDate = 0
 let cumuldiffPause = 0
 
 const createBackground = () => {
-  context.fillStyle = $('#backgroundColor').value
+  context.fillStyle = backgroundColor
   context.fillRect(0, 0, squarePow, squarePow)
 }
 
 const createGrid = () => {
-  context.fillStyle = $('#gridColor').value
+  context.fillStyle = gridColor
 
   for (let counter = 0; counter <= squareSize; counter++) {
-    context.fillRect(squareSize * counter - margin, 0, margin, squarePow)
-    context.fillRect(0, squareSize * counter - margin, squarePow, margin)
+    context.fillRect(squareSize * counter - marginSize, 0, marginSize, squarePow)
+    context.fillRect(0, squareSize * counter - marginSize, squarePow, marginSize)
   }
 }
 
@@ -60,10 +64,10 @@ const createSnake = () => {
     snakeY = 0
   }
 
-  context.fillStyle = $('#snakeColor').value
+  context.fillStyle = snakeColor
 
   trail.forEach((element) => {
-    context.fillRect(element.x * squareSize, element.y * squareSize, squareSize - margin, squareSize - margin)
+    context.fillRect(element.x * squareSize, element.y * squareSize, squareSize - marginSize, squareSize - marginSize)
 
     // S'il se mord la queue, on recommence au début.
     if (element.x === snakeX && element.y === snakeY) {
@@ -97,8 +101,8 @@ const createApple = () => {
     appleY = randomPlace()
   }
 
-  context.fillStyle = $('#appleColor').value
-  context.fillRect(appleX * squareSize, appleY * squareSize, squareSize - margin, squareSize - margin)
+  context.fillStyle = appleColor
+  context.fillRect(appleX * squareSize, appleY * squareSize, squareSize - marginSize, squareSize - marginSize)
 }
 
 const setTimer = () => {
