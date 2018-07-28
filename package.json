@@ -4,7 +4,7 @@
   "description": "Snake game",
   "main": "dist/index.html",
   "scripts": {
-    "build": "rm -rf dist && ./node_modules/parcel-bundler/bin/cli.js index.html",
+    "dev": "rm -rf dist && ./node_modules/parcel-bundler/bin/cli.js index.html",
     "start": "rm -rf dist && ./node_modules/parcel-bundler/bin/cli.js build index.html"
   },
   "keywords": [],

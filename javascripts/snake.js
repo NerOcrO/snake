@@ -11,11 +11,6 @@ const score = $('#score')
 const scoreValue = score.innerHTML
 const timer = $('#timer')
 const context = $('canvas').getContext('2d')
-const spaceKeyCode = 32
-const leftArrowKeyCode = 37
-const upArrowKeyCode = 38
-const rightArrowKeyCode = 39
-const downArrowKeyCode = 40
 const squarePow = squareSize ** 2
 const trail = []
 const randomPlace = () => Math.floor(Math.random() * squareSize)
@@ -29,7 +24,7 @@ let directionY = 0
 let tail = tailSize
 let isPaused = false
 let isLaunched = false
-let keyPressed = 0
+let keyPressed = ''
 let initDate = 0
 let pauseDate = 0
 let cumuldiffPause = 0
@@ -145,33 +140,33 @@ const isReady = () => {
 
 const keyDown = (event) => {
   if (!isPaused) {
-    if (event.keyCode === leftArrowKeyCode && keyPressed !== rightArrowKeyCode) {
+    if (event.code === 'ArrowLeft' && keyPressed !== 'ArrowRight') {
       directionX = -1
       directionY = 0
-      keyPressed = event.keyCode
+      keyPressed = event.code
       isReady()
     }
-    else if (event.keyCode === rightArrowKeyCode && keyPressed !== leftArrowKeyCode) {
+    else if (event.code === 'ArrowRight' && keyPressed !== 'ArrowLeft') {
       directionX = 1
       directionY = 0
-      keyPressed = event.keyCode
+      keyPressed = event.code
       isReady()
     }
-    else if (event.keyCode === upArrowKeyCode && keyPressed !== downArrowKeyCode) {
+    else if (event.code === 'ArrowUp' && keyPressed !== 'ArrowDown') {
       directionX = 0
       directionY = -1
-      keyPressed = event.keyCode
+      keyPressed = event.code
       isReady()
     }
-    else if (event.keyCode === downArrowKeyCode && keyPressed !== upArrowKeyCode) {
+    else if (event.code === 'ArrowDown' && keyPressed !== 'ArrowUp') {
       directionX = 0
       directionY = 1
-      keyPressed = event.keyCode
+      keyPressed = event.code
       isReady()
     }
   }
 
-  if (event.keyCode === spaceKeyCode) {
+  if (event.code === 'Space') {
     isPaused = !isPaused
 
     if (isPaused) {
