@@ -20,7 +20,7 @@ const load = () => {
     $(`#${input.id}`).addEventListener('input', changeConfigurationTitle)
   })
 
-  fillHighScore()
+  $('#highScore').innerHTML = fillHighScore()
 }
 
 export default load

@@ -1,10 +1,12 @@
 'use strict'
 
-import { $, getNow, setHighScore, fillHighScore } from './utils'
+import { $, getNow, setHighScore, fillHighScore, setTimer } from './utils'
 import load from './configuration'
 
+const highScore = $('#highScore')
 const score = $('#score')
 const scoreValue = score.innerHTML
+let scoreSpan = Number(score.querySelector('span').innerHTML)
 const timer = $('#timer')
 const backgroundColor = $('#backgroundColor').value
 const gridColor = $('#gridColor').value
@@ -83,8 +85,8 @@ const createSnake = () => {
 
     // S'il se mord la queue, on recommence au début.
     if (element.x === snakeX && element.y === snakeY) {
-      setHighScore()
-      fillHighScore()
+      setHighScore(scoreSpan)
+      highScore.innerHTML = fillHighScore()
 
       tail = tailSize
       score.innerHTML = scoreValue
@@ -106,7 +108,7 @@ const createApple = () => {
     // The tail grows up.
     tail++
     // Update the score.
-    const scoreSpan = Number(score.querySelector('span').innerHTML) + 1
+    scoreSpan++
     score.innerHTML = `${'000000'.slice(0, -scoreSpan.toString().length)}<span>${scoreSpan}</span>`
     // Apple respawn with the new coordinates.
     appleX = randomPlace()
@@ -115,15 +117,6 @@ const createApple = () => {
 
   context.fillStyle = appleColor
   context.fillRect(appleX * squareSize, appleY * squareSize, squareSize - marginSize, squareSize - marginSize)
-}
-
-const setTimer = () => {
-  const diff = Math.floor((getNow().getTime() - initDate.getTime()) / 1000) - cumuldiffPause
-  const second = diff % 60
-  const minute = Math.floor((diff / 60) % 60)
-  const hour = Math.floor((diff / 3600) % 60)
-
-  timer.innerHTML = `<span>${'00'.slice(0, -hour.toString().length)}${hour}</span>:<span>${'00'.slice(0, -minute.toString().length)}${minute}</span>:<span>${'00'.slice(0, -second.toString().length)}${second}</span>`
 }
 
 const game = () => {
@@ -142,7 +135,7 @@ const game = () => {
     createApple()
 
     if (isLaunched || isPaused) {
-      setTimer()
+      timer.innerHTML = setTimer(getNow().getTime(), initDate.getTime(), cumuldiffPause)
     }
   }
 }
