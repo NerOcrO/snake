@@ -1,6 +1,6 @@
 'use strict'
 
-import { $, getNow, setHighScore, fillHighScore, setTimer } from './utils'
+import $, * as utils from './utils'
 import load from './configuration'
 
 const highScore = $('#highScore')
@@ -85,12 +85,12 @@ const createSnake = () => {
 
     // S'il se mord la queue, on recommence au début.
     if (element.x === snakeX && element.y === snakeY) {
-      setHighScore(scoreSpan)
-      highScore.innerHTML = fillHighScore()
+      utils.setHighScore(scoreSpan)
+      highScore.innerHTML = utils.fillHighScore()
 
       tail = tailSize
       score.innerHTML = scoreValue
-      initDate = getNow()
+      initDate = utils.getNow()
       cumuldiffPause = 0
     }
   })
@@ -109,7 +109,8 @@ const createApple = () => {
     tail++
     // Update the score.
     scoreSpan++
-    score.innerHTML = `${'000000'.slice(0, -scoreSpan.toString().length)}<span>${scoreSpan}</span>`
+    score.innerHTML = utils.makingOfScore(scoreSpan)
+
     // Apple respawn with the new coordinates.
     appleX = randomPlace()
     appleY = randomPlace()
@@ -135,7 +136,7 @@ const game = () => {
     createApple()
 
     if (isLaunched || isPaused) {
-      timer.innerHTML = setTimer(getNow().getTime(), initDate.getTime(), cumuldiffPause)
+      timer.innerHTML = utils.setTimer(utils.getNow().getTime(), initDate.getTime(), cumuldiffPause)
     }
   }
 }
@@ -143,7 +144,7 @@ const game = () => {
 const isGameLaunched = () => {
   if (!isLaunched) {
     isLaunched = !isLaunched
-    initDate = getNow()
+    initDate = utils.getNow()
   }
 }
 
@@ -171,10 +172,10 @@ const keyDown = (event) => {
     isPaused = !isPaused
 
     if (isPaused) {
-      pauseDate = getNow()
+      pauseDate = utils.getNow()
     }
     else {
-      cumuldiffPause += Math.floor((getNow().getTime() - pauseDate.getTime()) / 1000)
+      cumuldiffPause += Math.floor((utils.getNow().getTime() - pauseDate.getTime()) / 1000)
     }
   }
 }

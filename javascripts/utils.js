@@ -1,6 +1,6 @@
 const getHighScore = () => localStorage.getItem('highScore') || 0
 
-export const $ = selector => document.querySelector(selector)
+const $ = selector => document.querySelector(selector)
 
 export const $$ = selector => document.querySelectorAll(selector)
 
@@ -16,18 +16,18 @@ export const setHighScore = (currentScore) => {
   }
 }
 
-export const fillHighScore = () => {
-  const highScore = getHighScore()
-  const drainZero = '000000'.slice(0, -highScore.toString().length)
+export const makingOfScore = score => '00000'.concat(`<span>${score}</span>`).slice(-19)
 
-  return `🏆 ${drainZero}<span>${highScore}</span>`
-}
+export const fillHighScore = () => `🏆 ${makingOfScore(getHighScore())}`
 
-export const setTimer = (now, startDate, cumuldiffPause) => {
-  const diff = Math.floor((now - startDate) / 1000) - cumuldiffPause
+export const setTimer = (now, startDate, accumulationdiffPause) => {
+  const diff = Math.floor((now - startDate) / 1000) - accumulationdiffPause
   const second = diff % 60
   const minute = Math.floor((diff / 60) % 60)
   const hour = Math.floor((diff / 3600) % 60)
+  const showTime = time => `<span>${'0'.concat(time).slice(-2)}</span>`
 
-  return `<span>${'00'.slice(0, -hour.toString().length)}${hour}</span>:<span>${'00'.slice(0, -minute.toString().length)}${minute}</span>:<span>${'00'.slice(0, -second.toString().length)}${second}</span>`
+  return `${showTime(hour)}:${showTime(minute)}:${showTime(second)}`
 }
+
+export default $
