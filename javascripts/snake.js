@@ -87,6 +87,7 @@ const createSnake = () => {
     if (element.x === snakeX && element.y === snakeY) {
       utils.setHighScore(scoreSpan)
       highScore.innerHTML = utils.fillHighScore()
+      scoreSpan = 0
 
       tail = tailSize
       score.innerHTML = scoreValue
