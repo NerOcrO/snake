@@ -4,11 +4,7 @@ const $ = selector => document.querySelector(selector)
 
 export const $$ = selector => document.querySelectorAll(selector)
 
-export const getNow = () => {
-  const now = new Date()
-  const getTime = () => now.getTime()
-  return now
-}
+export const getNow = () => new Date()
 
 export const setHighScore = (currentScore) => {
   if (getHighScore() < currentScore) {
