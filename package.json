@@ -3,23 +3,23 @@
   "version": "1.0.0",
   "description": "Snake game",
   "main": "dist/index.html",
-  "scripts": {
-    "dev": "rm -rf dist && ./node_modules/parcel-bundler/bin/cli.js index.html",
-    "start": "rm -rf dist && ./node_modules/parcel-bundler/bin/cli.js build index.html"
-  },
   "keywords": [],
   "author": "NerOcrO",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NerOcrO/snake"
+  },
   "dependencies": {
     "parcel-bundler": "^1.11.0"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.16.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/NerOcrO/snake"
+  "scripts": {
+    "dev": "rm -rf dist && ./node_modules/parcel-bundler/bin/cli.js index.html",
+    "start": "rm -rf dist && ./node_modules/parcel-bundler/bin/cli.js build index.html"
   }
 }
