@@ -11,7 +11,7 @@
     "url": "https://github.com/NerOcrO/snake"
   },
   "dependencies": {
-    "parcel-bundler": "^1.12.3"
+    "parcel-bundler": "^1.12.4"
   },
   "devDependencies": {
     "eslint": "^6.3.0",
