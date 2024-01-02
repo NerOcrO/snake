@@ -107,9 +107,9 @@ const createApple = () => {
   // The snake eats the apple.
   if (appleX === snakeX && appleY === snakeY) {
     // The tail grows up.
-    tail++
+    tail += 1
     // Update the score.
-    scoreSpan++
+    scoreSpan += 1
     score.innerHTML = utils.makingOfScore(scoreSpan)
 
     // Apple respawn with the new coordinates.
