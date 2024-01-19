@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Snake game",
   "main": "dist/index.html",
-  "keywords": [],
   "author": "NerOcrO",
   "license": "MIT",
   "repository": {
