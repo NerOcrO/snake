@@ -1,5 +1,3 @@
-'use strict'
-
 import $, * as utils from './utils'
 import load from './configuration'
 
