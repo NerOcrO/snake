@@ -1,4 +1,4 @@
-import $, * as utils from './utils'
+import { $, $$, fillHighScore } from './utils.js'
 
 const saveConfiguration = (event) => {
   localStorage.setItem(event.currentTarget.id, event.currentTarget.value)
@@ -8,8 +8,8 @@ const changeConfigurationTitle = (event) => {
   $(`#${event.currentTarget.id}`).title = event.currentTarget.value
 }
 
-const load = () => {
-  utils.$$('input, select').forEach((input) => {
+export const load = () => {
+  $$('input, select').forEach((input) => {
     const value = localStorage.getItem(input.id)
 
     if (value) {
@@ -20,7 +20,5 @@ const load = () => {
     $(`#${input.id}`).addEventListener('input', changeConfigurationTitle)
   })
 
-  $('#highScore').innerHTML = utils.fillHighScore()
+  $('#highScore').innerHTML = fillHighScore()
 }
-
-export default load

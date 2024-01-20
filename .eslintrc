@@ -11,6 +11,56 @@
     "sourceType": "module"
   },
   "rules": {
-    "semi": ["error", "never"]
+    "array-bracket-newline": "error",
+    "array-bracket-spacing": "error",
+    "array-element-newline": ["error", "consistent"],
+    "arrow-parens": "error",
+    "arrow-spacing": "error",
+    "brace-style": "error",
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "imports": "always-multiline",
+        "objects": "always-multiline"
+      }
+    ],
+    "comma-spacing": "error",
+    "default-case": "error",
+    "eol-last": "error",
+    "eqeqeq": "error",
+    "function-paren-newline": ["error", "consistent"],
+    "id-match": "error",
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "jsx-quotes": "error",
+    "keyword-spacing": "error",
+    "max-len": [
+      "error",
+      {
+        "code": 160,
+        "ignoreUrls": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreRegExpLiterals": true
+      }
+    ],
+    "no-console": "error",
+    "no-multiple-empty-lines": "error",
+    "no-multi-spaces": "error",
+    "no-param-reassign": "error",
+    "no-tabs": "error",
+    "no-trailing-spaces": "error",
+    "no-whitespace-before-property": "error",
+    "object-curly-spacing": ["error", "always"],
+    "object-curly-newline": "error",
+    "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }],
+    "prefer-const": "error",
+    "quote-props": ["error", "as-needed"],
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "semi": ["error", "never"],
+    "sort-keys": "error",
+    "space-before-blocks": "error",
+    "space-infix-ops": "error",
+    "yoda": "error"
   }
 }

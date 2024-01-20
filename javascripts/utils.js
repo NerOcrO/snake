@@ -1,6 +1,6 @@
 const getHighScore = () => localStorage.getItem('highScore') || 0
 
-const $ = (selector) => document.querySelector(selector)
+export const $ = (selector) => document.querySelector(selector)
 
 export const $$ = (selector) => document.querySelectorAll(selector)
 
@@ -25,5 +25,3 @@ export const setTimer = (now, startDate, accumulationdiffPause) => {
 
   return `${showTime(hour)}:${showTime(minute)}:${showTime(second)}`
 }
-
-export default $

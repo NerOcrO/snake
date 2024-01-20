@@ -1,5 +1,5 @@
-import $, * as utils from './utils'
-import load from './configuration'
+import { load } from './configuration.js'
+import { $, fillHighScore, getNow, setHighScore, makingOfScore, setTimer } from './utils.js'
 
 const highScore = $('#highScore')
 const score = $('#score')
@@ -49,14 +49,11 @@ const createGrid = () => {
 const createSnake = () => {
   if (newDirection === 'ArrowLeft') {
     snakeX += -1
-  }
-  else if (newDirection === 'ArrowRight') {
+  } else if (newDirection === 'ArrowRight') {
     snakeX += 1
-  }
-  else if (newDirection === 'ArrowUp') {
+  } else if (newDirection === 'ArrowUp') {
     snakeY += -1
-  }
-  else if (newDirection === 'ArrowDown') {
+  } else if (newDirection === 'ArrowDown') {
     snakeY += 1
   }
 
@@ -65,14 +62,11 @@ const createSnake = () => {
   // Walkthrough the wall.
   if (snakeX < 0) {
     snakeX = squareSize - 1
-  }
-  else if (snakeX > squareSize - 1) {
+  } else if (snakeX > squareSize - 1) {
     snakeX = 0
-  }
-  else if (snakeY < 0) {
+  } else if (snakeY < 0) {
     snakeY = squareSize - 1
-  }
-  else if (snakeY > squareSize - 1) {
+  } else if (snakeY > squareSize - 1) {
     snakeY = 0
   }
 
@@ -83,13 +77,13 @@ const createSnake = () => {
 
     // S'il se mord la queue, on recommence au début.
     if (element.x === snakeX && element.y === snakeY) {
-      utils.setHighScore(scoreSpan)
-      highScore.innerHTML = utils.fillHighScore()
+      setHighScore(scoreSpan)
+      highScore.innerHTML = fillHighScore()
       scoreSpan = 0
 
       tail = tailSize
       score.innerHTML = scoreValue
-      initDate = utils.getNow()
+      initDate = getNow()
       cumuldiffPause = 0
     }
   })
@@ -108,7 +102,7 @@ const createApple = () => {
     tail++
     // Update the score.
     scoreSpan++
-    score.innerHTML = utils.makingOfScore(scoreSpan)
+    score.innerHTML = makingOfScore(scoreSpan)
 
     // Apple respawn with the new coordinates.
     appleX = randomPlace()
@@ -127,15 +121,14 @@ const game = () => {
     context.font = `bold ${squareSize * 2}px eightiesFont`
     context.textBaseline = 'middle'
     context.fillText(text, (squarePow / 2) - (context.measureText(text).width / 2), (squarePow / 2))
-  }
-  else {
+  } else {
     createBackground()
     createGrid()
     createSnake()
     createApple()
 
     if (isLaunched || isPaused) {
-      timer.innerHTML = utils.setTimer(utils.getNow().getTime(), initDate.getTime(), cumuldiffPause)
+      timer.innerHTML = setTimer(getNow().getTime(), initDate.getTime(), cumuldiffPause)
     }
   }
 }
@@ -143,7 +136,7 @@ const game = () => {
 const isGameLaunched = () => {
   if (!isLaunched) {
     isLaunched = !isLaunched
-    initDate = utils.getNow()
+    initDate = getNow()
   }
 }
 
@@ -152,16 +145,13 @@ const keyDown = (event) => {
     if (event.code === 'ArrowLeft' && oldDirection !== 'ArrowRight') {
       newDirection = event.code
       isGameLaunched()
-    }
-    else if (event.code === 'ArrowRight' && oldDirection !== 'ArrowLeft') {
+    } else if (event.code === 'ArrowRight' && oldDirection !== 'ArrowLeft') {
       newDirection = event.code
       isGameLaunched()
-    }
-    else if (event.code === 'ArrowUp' && oldDirection !== 'ArrowDown') {
+    } else if (event.code === 'ArrowUp' && oldDirection !== 'ArrowDown') {
       newDirection = event.code
       isGameLaunched()
-    }
-    else if (event.code === 'ArrowDown' && oldDirection !== 'ArrowUp') {
+    } else if (event.code === 'ArrowDown' && oldDirection !== 'ArrowUp') {
       newDirection = event.code
       isGameLaunched()
     }
@@ -171,10 +161,9 @@ const keyDown = (event) => {
     isPaused = !isPaused
 
     if (isPaused) {
-      pauseDate = utils.getNow()
-    }
-    else {
-      cumuldiffPause += Math.floor((utils.getNow().getTime() - pauseDate.getTime()) / 1000)
+      pauseDate = getNow()
+    } else {
+      cumuldiffPause += Math.floor((getNow().getTime() - pauseDate.getTime()) / 1000)
     }
   }
 }
