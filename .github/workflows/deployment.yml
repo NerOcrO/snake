@@ -1,0 +1,29 @@
+name: Deployment
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  build:
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: yarn
+          node-version-file: package.json
+      - name: Install packages
+        run: yarn
+      - name: Build
+        run: yarn build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages
+          path: dist
+      - uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages
