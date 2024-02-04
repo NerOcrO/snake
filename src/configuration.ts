@@ -1,10 +1,12 @@
-import { $, $$, fillHighScore } from './utils.js'
+import { $, $$, fillHighScore } from './utils'
 
-const saveConfiguration = (event) => {
+const saveConfiguration = (event: InputEvent) => {
+  // @ts-ignore
   localStorage.setItem(event.currentTarget.id, event.currentTarget.value)
 }
 
-const changeConfigurationTitle = (event) => {
+const changeConfigurationTitle = (event: InputEvent) => {
+  // @ts-ignore
   $(`#${event.currentTarget.id}`).title = event.currentTarget.value
 }
 

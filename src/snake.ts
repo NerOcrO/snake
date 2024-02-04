@@ -1,5 +1,5 @@
-import { load } from './configuration.js'
-import { $, fillHighScore, getNow, setHighScore, makingOfScore, setTimer } from './utils.js'
+import { load } from './configuration'
+import { $, fillHighScore, getNow, setHighScore, makingOfScore, setTimer } from './utils'
 
 const highScore = $('#highScore')
 const score = $('#score')
@@ -14,9 +14,9 @@ const squareSize = $('#squareSize').value
 const marginSize = $('#marginSize').value
 const tailSize = $('#tailSize').value
 const speed = $('#speed').value
-const context = $('canvas').getContext('2d')
+const context: CanvasRenderingContext2D = $('canvas').getContext('2d')
 const squarePow = squareSize ** 2
-const trail = []
+const trail: { x: number, y: number }[] = []
 const randomPlace = () => Math.floor(Math.random() * squareSize)
 
 let appleX = randomPlace()
@@ -28,8 +28,8 @@ let isPaused = false
 let isLaunched = false
 let oldDirection = ''
 let newDirection = ''
-let initDate = 0
-let pauseDate = 0
+let initDate: Date
+let pauseDate: Date
 let cumuldiffPause = 0
 
 const createBackground = () => {
@@ -140,7 +140,7 @@ const isGameLaunched = () => {
   }
 }
 
-const keyDown = (event) => {
+const keyDown = (event: KeyboardEvent) => {
   if (!isPaused) {
     if (event.code === 'ArrowLeft' && oldDirection !== 'ArrowRight') {
       newDirection = event.code
