@@ -1,26 +1,30 @@
-import { $, $$, fillHighScore } from './utils'
+import { showHighScore } from './score'
+import { $, $$ } from './utils'
 
-const saveConfiguration = (event: InputEvent) => {
-  // @ts-ignore
-  localStorage.setItem(event.currentTarget.id, event.currentTarget.value)
-}
-
-const changeConfigurationTitle = (event: InputEvent) => {
-  // @ts-ignore
-  $(`#${event.currentTarget.id}`).title = event.currentTarget.value
-}
+type HTMLInputOrSelectElement = HTMLInputElement | HTMLSelectElement
 
 export const load = () => {
-  $$('input, select').forEach((input) => {
-    const value = localStorage.getItem(input.id)
+  ($('#highScore') as HTMLSpanElement).innerHTML = showHighScore()
+
+  $$('input, select').forEach((element: Element) => {
+    const elementId = $(`#${element.id}`) as HTMLInputOrSelectElement
+    const value = localStorage.getItem(element.id)
 
     if (value) {
-      $(`#${input.id}`).value = value
+      elementId.value = value
     }
 
-    $(`#${input.id}`).addEventListener('input', saveConfiguration)
-    $(`#${input.id}`).addEventListener('input', changeConfigurationTitle)
+    elementId.addEventListener('input', saveValue)
+    elementId.addEventListener('input', changeTitle)
   })
+}
 
-  $('#highScore').innerHTML = fillHighScore()
+function saveValue(event: Event) {
+  const target = event.target as HTMLInputOrSelectElement
+  localStorage.setItem(target.id, target.value)
+}
+
+function changeTitle(event: Event) {
+  const target = event.target as HTMLInputOrSelectElement
+  ($(`#${target.id}`) as HTMLInputOrSelectElement).title = target.value
 }

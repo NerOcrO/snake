@@ -1,6 +1,8 @@
 {
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
   "env": {
     "browser": true,
@@ -8,6 +10,7 @@
   },
   "parserOptions": {
     "ecmaVersion": "latest",
+    "project": ["./tsconfig.json"],
     "sourceType": "module"
   },
   "rules": {

@@ -1,48 +1,59 @@
 import { load } from './configuration'
-import { $, fillHighScore, getNow, setHighScore, makingOfScore, setTimer } from './utils'
+import { setHighScore, showHighScore, showScore } from './score'
+import { showTimer } from './timer'
+import { $, randomPlace as randomCoordinate } from './utils'
 
-const highScore = $('#highScore')
-const score = $('#score')
-const scoreValue = score.innerHTML
-let scoreSpan = Number(score.querySelector('span').innerHTML)
-const timer = $('#timer')
-const backgroundColor = $('#backgroundColor').value
-const gridColor = $('#gridColor').value
-const snakeColor = $('#snakeColor').value
-const appleColor = $('#appleColor').value
-const squareSize = $('#squareSize').value
-const marginSize = $('#marginSize').value
-const tailSize = $('#tailSize').value
-const speed = $('#speed').value
-const context: CanvasRenderingContext2D = $('canvas').getContext('2d')
-const squarePow = squareSize ** 2
-const trail: { x: number, y: number }[] = []
-const randomPlace = () => Math.floor(Math.random() * squareSize)
+type Snake = Readonly<{
+  x: number
+  y: number
+}>
 
-let appleX = randomPlace()
-let appleY = randomPlace()
+const highScoreElement = $('#highScore') as HTMLSpanElement
+const scoreElement = $('#score') as HTMLSpanElement
+const scoreHtml = scoreElement.innerHTML
+const timerElement = $('#timer') as HTMLSpanElement
+const backgroundColor = ($('#backgroundColor') as HTMLInputElement).value
+const gridColor = ($('#gridColor') as HTMLInputElement).value
+const snakeColor = ($('#snakeColor') as HTMLInputElement).value
+const appleColor = ($('#appleColor') as HTMLInputElement).value
+const squareSize = Number(($('#squareSize') as HTMLInputElement).value)
+const marginSize = Number(($('#marginSize') as HTMLInputElement).value)
+const tailSizeSnakeInit = Number(($('#tailSizeSnake') as HTMLInputElement).value)
+const speed = Number(($('#speed') as HTMLInputElement).value)
+const gameField = ($('canvas') as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D
+const gameFieldSize = squareSize * squareSize
+const oneSecond = 1000
+
+let appleX = randomCoordinate(squareSize)
+let appleY = randomCoordinate(squareSize)
 let snakeX = squareSize / 2
 let snakeY = squareSize / 2
-let tail = tailSize
-let isPaused = false
-let isLaunched = false
+let tailSizeSnake = tailSizeSnakeInit
+let isGamePaused = false
+let isGameOver = false
+let isGameStarted = false
 let oldDirection = ''
 let newDirection = ''
-let initDate: Date
-let pauseDate: Date
-let cumuldiffPause = 0
+let snake: Snake[] = []
+let time = 0
+let score = 0
+
+let gameInterval: number
+let timerInterval: number
 
 const createBackground = () => {
-  context.fillStyle = backgroundColor
-  context.fillRect(0, 0, squarePow, squarePow)
+  gameField.fillStyle = backgroundColor
+  gameField.fillRect(0, 0, gameFieldSize, gameFieldSize)
 }
 
 const createGrid = () => {
-  context.fillStyle = gridColor
+  gameField.fillStyle = gridColor
+  const column = (counter: number) => gameField.fillRect(squareSize * counter - marginSize, 0, marginSize, gameFieldSize)
+  const line = (counter: number) => gameField.fillRect(0, squareSize * counter - marginSize, gameFieldSize, marginSize)
 
   for (let counter = 0; counter <= squareSize; counter++) {
-    context.fillRect(squareSize * counter - marginSize, 0, marginSize, squarePow)
-    context.fillRect(0, squareSize * counter - marginSize, squarePow, marginSize)
+    column(counter)
+    line(counter)
   }
 }
 
@@ -70,104 +81,138 @@ const createSnake = () => {
     snakeY = 0
   }
 
-  context.fillStyle = snakeColor
+  gameField.fillStyle = snakeColor
 
-  trail.forEach((element) => {
-    context.fillRect(element.x * squareSize, element.y * squareSize, squareSize - marginSize, squareSize - marginSize)
+  snake.forEach((element: Snake) => {
+    gameField.fillRect(element.x * squareSize, element.y * squareSize, squareSize - marginSize, squareSize - marginSize)
+    const doesItEatItSelf = isGameStarted && element.x === snakeX && element.y === snakeY
 
-    // S'il se mord la queue, on recommence au début.
-    if (element.x === snakeX && element.y === snakeY) {
-      setHighScore(scoreSpan)
-      highScore.innerHTML = fillHighScore()
-      scoreSpan = 0
-
-      tail = tailSize
-      score.innerHTML = scoreValue
-      initDate = getNow()
-      cumuldiffPause = 0
+    if (doesItEatItSelf) {
+      setHighScore(score)
+      highScoreElement.innerHTML = showHighScore()
+      isGameOver = true
     }
   })
 
-  trail.push({ x: snakeX, y: snakeY })
+  snake.push({ x: snakeX, y: snakeY })
 
-  while (trail.length > tail) {
-    trail.shift()
+  while (snake.length > tailSizeSnake) {
+    snake.shift()
+  }
+
+  const isTheSnakeAteTheApple = appleX === snakeX && appleY === snakeY
+
+  if (isTheSnakeAteTheApple) {
+    tailSizeSnake++
+    score++
+    scoreElement.innerHTML = showScore(score)
+
+    appleX = randomCoordinate(squareSize)
+    appleY = randomCoordinate(squareSize)
   }
 }
 
 const createApple = () => {
-  // The snake eats the apple.
-  if (appleX === snakeX && appleY === snakeY) {
-    // The tail grows up.
-    tail++
-    // Update the score.
-    scoreSpan++
-    score.innerHTML = makingOfScore(scoreSpan)
-
-    // Apple respawn with the new coordinates.
-    appleX = randomPlace()
-    appleY = randomPlace()
-  }
-
-  context.fillStyle = appleColor
-  context.fillRect(appleX * squareSize, appleY * squareSize, squareSize - marginSize, squareSize - marginSize)
+  gameField.fillStyle = appleColor
+  gameField.fillRect(appleX * squareSize, appleY * squareSize, squareSize - marginSize, squareSize - marginSize)
 }
 
 const game = () => {
-  if (isPaused) {
-    const text = 'Pause'
-
-    context.fillStyle = '#fff'
-    context.font = `bold ${squareSize * 2}px eightiesFont`
-    context.textBaseline = 'middle'
-    context.fillText(text, (squarePow / 2) - (context.measureText(text).width / 2), (squarePow / 2))
+  if (isGameOver) {
+    createGameOver()
+  } else if (isGamePaused) {
+    createPause()
   } else {
     createBackground()
     createGrid()
-    createSnake()
     createApple()
-
-    if (isLaunched || isPaused) {
-      timer.innerHTML = setTimer(getNow().getTime(), initDate.getTime(), cumuldiffPause)
-    }
+    createSnake()
   }
 }
 
-const isGameLaunched = () => {
-  if (!isLaunched) {
-    isLaunched = !isLaunched
-    initDate = getNow()
+const startTheGame = () => {
+  if (!isGameStarted) {
+    isGameStarted = !isGameStarted
   }
 }
 
 const keyDown = (event: KeyboardEvent) => {
-  if (!isPaused) {
-    if (event.code === 'ArrowLeft' && oldDirection !== 'ArrowRight') {
-      newDirection = event.code
-      isGameLaunched()
-    } else if (event.code === 'ArrowRight' && oldDirection !== 'ArrowLeft') {
-      newDirection = event.code
-      isGameLaunched()
-    } else if (event.code === 'ArrowUp' && oldDirection !== 'ArrowDown') {
-      newDirection = event.code
-      isGameLaunched()
-    } else if (event.code === 'ArrowDown' && oldDirection !== 'ArrowUp') {
-      newDirection = event.code
-      isGameLaunched()
-    }
+  if (event.code === 'Escape') {
+    isGameOver = !isGameOver
+
+    clearInterval(gameInterval)
+    clearInterval(timerInterval)
+    initTheGame()
   }
 
-  if (event.code === 'Space') {
-    isPaused = !isPaused
+  if (!isGameOver) {
+    if (event.code === 'Space') {
+      isGamePaused = !isGamePaused
+    }
 
-    if (isPaused) {
-      pauseDate = getNow()
-    } else {
-      cumuldiffPause += Math.floor((getNow().getTime() - pauseDate.getTime()) / 1000)
+    if (!isGamePaused) {
+      if (event.code === 'ArrowLeft' && oldDirection !== 'ArrowRight') {
+        newDirection = event.code
+        startTheGame()
+      } else if (event.code === 'ArrowRight' && oldDirection !== 'ArrowLeft') {
+        newDirection = event.code
+        startTheGame()
+      } else if (event.code === 'ArrowUp' && oldDirection !== 'ArrowDown') {
+        newDirection = event.code
+        startTheGame()
+      } else if (event.code === 'ArrowDown' && oldDirection !== 'ArrowUp') {
+        newDirection = event.code
+        startTheGame()
+      }
     }
   }
 }
 
+function timer() {
+  if (isGameStarted) {
+    if (!isGamePaused && !isGameOver) {
+      time = time + 1
+    }
+
+    timerElement.innerHTML = showTimer(time)
+  }
+}
+
+function createPause() {
+  const text = 'Pause'
+
+  gameField.fillStyle = '#fff'
+  gameField.font = `bold ${squareSize * 2}px eightiesFont`
+  gameField.textBaseline = 'middle'
+  gameField.fillText(text, (gameFieldSize / 2) - (gameField.measureText(text).width / 2), (gameFieldSize / 2))
+}
+
+function createGameOver() {
+  const text = 'Game Over'
+
+  gameField.fillStyle = '#fff'
+  gameField.font = `bold ${squareSize * 2}px eightiesFont`
+  gameField.textBaseline = 'middle'
+  gameField.fillText(text, (gameFieldSize / 2) - (gameField.measureText(text).width / 2), (gameFieldSize / 2))
+}
+
+function initTheGame() {
+  isGameStarted = false
+  snake = []
+  time = 0
+  timerElement.innerHTML = showTimer(time)
+  score = 0
+  scoreElement.innerHTML = scoreHtml
+  snakeX = squareSize / 2
+  snakeY = squareSize / 2
+  oldDirection = ''
+  newDirection = ''
+  tailSizeSnake = tailSizeSnakeInit
+
+  timerInterval = setInterval(timer, oneSecond)
+  gameInterval = setInterval(game, speed)
+}
+
 window.addEventListener('keydown', keyDown)
 window.addEventListener('load', load)
-setInterval(game, speed)
+initTheGame()

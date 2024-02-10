@@ -5,6 +5,8 @@
     "node": "20.11.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
     "esbuild": "^0.20.0",
     "eslint": "^8.56.0",
     "stylelint": "^16.2.0",
@@ -13,12 +15,15 @@
     "typescript": "^5.3.3"
   },
   "scripts": {
-    "build": "yarn build:js && yarn build:css && cp src/index.html dist",
-    "build:js": "esbuild src/snake.ts --bundle --minify --outfile=dist/snake.js",
-    "build:css": "esbuild src/style.css --bundle --minify --outfile=dist/style.css --loader:.ttf=file",
+    "build": "yarn build:js --minify && yarn build:css --minify && cp src/index.html dist",
+    "build:dev": "yarn build:js && yarn build:css && cp src/index.html dist",
+    "build:js": "esbuild src/snake.ts --bundle --outfile=dist/snake.js",
+    "build:css": "esbuild src/style.css --bundle --outfile=dist/style.css --loader:.ttf=file",
+    "dev": "yarn build:dev && yarn server",
     "lint:js": "npx eslint src",
     "lint:css": "stylelint src/style.css",
-    "start": "yarn build && python3 -m http.server 3000 --directory=dist",
+    "server": "python3 -m http.server 3000 --directory=dist",
+    "start": "yarn build && yarn server",
     "typecheck": "tsc --noEmit"
   }
 }
