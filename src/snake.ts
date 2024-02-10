@@ -1,218 +1,149 @@
-import { load } from './configuration'
-import { setHighScore, showHighScore, showScore } from './score'
-import { showTimer } from './timer'
-import { $, randomPlace as randomCoordinate } from './utils'
+import { Apple } from './entities/Apple'
+import { Game } from './entities/Game'
+import { Score } from './entities/Score'
+import { Snake } from './entities/Snake'
+import { Timer } from './entities/Timer'
+import { $, $$ } from './utils'
+import { createApple } from './web-ui/apple'
+import { createBackground } from './web-ui/background'
+import { createGameOver } from './web-ui/game-over'
+import { createGrid } from './web-ui/grid'
+import { createPause } from './web-ui/pause'
+import { showHighScore, showScore } from './web-ui/score'
+import { createSnake } from './web-ui/snake'
+import { showTimer } from './web-ui/timer'
 
-type Snake = Readonly<{
-  x: number
-  y: number
-}>
+type HTMLInputOrSelectElement = HTMLInputElement | HTMLSelectElement
 
-const highScoreElement = $('#highScore') as HTMLSpanElement
-const scoreElement = $('#score') as HTMLSpanElement
-const scoreHtml = scoreElement.innerHTML
-const timerElement = $('#timer') as HTMLSpanElement
-const backgroundColor = ($('#backgroundColor') as HTMLInputElement).value
-const gridColor = ($('#gridColor') as HTMLInputElement).value
-const snakeColor = ($('#snakeColor') as HTMLInputElement).value
-const appleColor = ($('#appleColor') as HTMLInputElement).value
-const squareSize = Number(($('#squareSize') as HTMLInputElement).value)
-const marginSize = Number(($('#marginSize') as HTMLInputElement).value)
-const tailSizeSnakeInit = Number(($('#tailSizeSnake') as HTMLInputElement).value)
-const speed = Number(($('#speed') as HTMLInputElement).value)
-const gameField = ($('canvas') as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D
-const gameFieldSize = squareSize * squareSize
-const oneSecond = 1000
+const highScoreElement = $<HTMLSpanElement>('#highScore')
+const scoreElement = $<HTMLSpanElement>('#score')
+const timerElement = $<HTMLSpanElement>('#timer')
+const gameField = $<HTMLCanvasElement>('canvas').getContext('2d') as CanvasRenderingContext2D
+const numberOfSquare = Number($<HTMLInputElement>('#numberOfSquare').value)
+const marginSize = 2
 
-let appleX = randomCoordinate(squareSize)
-let appleY = randomCoordinate(squareSize)
-let snakeX = squareSize / 2
-let snakeY = squareSize / 2
-let tailSizeSnake = tailSizeSnakeInit
-let isGamePaused = false
-let isGameOver = false
-let isGameStarted = false
-let oldDirection = ''
-let newDirection = ''
-let snake: Snake[] = []
-let time = 0
-let score = 0
-
+let game: Game
+let apple: Apple
+let score: Score
+let timer: Timer
+let snake: Snake
 let gameInterval: number
 let timerInterval: number
 
-const createBackground = () => {
-  gameField.fillStyle = backgroundColor
-  gameField.fillRect(0, 0, gameFieldSize, gameFieldSize)
-}
-
-const createGrid = () => {
-  gameField.fillStyle = gridColor
-  const column = (counter: number) => gameField.fillRect(squareSize * counter - marginSize, 0, marginSize, gameFieldSize)
-  const line = (counter: number) => gameField.fillRect(0, squareSize * counter - marginSize, gameFieldSize, marginSize)
-
-  for (let counter = 0; counter <= squareSize; counter++) {
-    column(counter)
-    line(counter)
-  }
-}
-
-const createSnake = () => {
-  if (newDirection === 'ArrowLeft') {
-    snakeX += -1
-  } else if (newDirection === 'ArrowRight') {
-    snakeX += 1
-  } else if (newDirection === 'ArrowUp') {
-    snakeY += -1
-  } else if (newDirection === 'ArrowDown') {
-    snakeY += 1
-  }
-
-  oldDirection = newDirection
-
-  // Walkthrough the wall.
-  if (snakeX < 0) {
-    snakeX = squareSize - 1
-  } else if (snakeX > squareSize - 1) {
-    snakeX = 0
-  } else if (snakeY < 0) {
-    snakeY = squareSize - 1
-  } else if (snakeY > squareSize - 1) {
-    snakeY = 0
-  }
-
-  gameField.fillStyle = snakeColor
-
-  snake.forEach((element: Snake) => {
-    gameField.fillRect(element.x * squareSize, element.y * squareSize, squareSize - marginSize, squareSize - marginSize)
-    const doesItEatItSelf = isGameStarted && element.x === snakeX && element.y === snakeY
-
-    if (doesItEatItSelf) {
-      setHighScore(score)
-      highScoreElement.innerHTML = showHighScore()
-      isGameOver = true
-    }
-  })
-
-  snake.push({ x: snakeX, y: snakeY })
-
-  while (snake.length > tailSizeSnake) {
-    snake.shift()
-  }
-
-  const isTheSnakeAteTheApple = appleX === snakeX && appleY === snakeY
-
-  if (isTheSnakeAteTheApple) {
-    tailSizeSnake++
-    score++
-    scoreElement.innerHTML = showScore(score)
-
-    appleX = randomCoordinate(squareSize)
-    appleY = randomCoordinate(squareSize)
-  }
-}
-
-const createApple = () => {
-  gameField.fillStyle = appleColor
-  gameField.fillRect(appleX * squareSize, appleY * squareSize, squareSize - marginSize, squareSize - marginSize)
-}
-
-const game = () => {
-  if (isGameOver) {
-    createGameOver()
-  } else if (isGamePaused) {
-    createPause()
+function currentGame() {
+  if (game.isOver()) {
+    createGameOver(gameField, game)
+  } else if (game.isPaused()) {
+    createPause(gameField, game)
   } else {
-    createBackground()
-    createGrid()
-    createApple()
-    createSnake()
+    createBackground(gameField, game)
+    createGrid(gameField, game, marginSize)
+    createApple(gameField, game, apple, marginSize)
+    createSnake(gameField, game, snake, marginSize)
+
+    if (game.isStarted()) {
+      snake.move()
+      snake.deadWhenItEatsItself()
+      game.overWhenTheSnakeIsDead()
+      game.overWhenTheWallIsTouched()
+
+      if (!game.isOver()) {
+        game.isTheSnakeEatTheApple()
+
+        highScoreElement.innerHTML = showHighScore()
+        scoreElement.innerHTML = showScore(score.total())
+      }
+    }
   }
 }
 
-const startTheGame = () => {
-  if (!isGameStarted) {
-    isGameStarted = !isGameStarted
+function currentTimer() {
+  if (game.isStarted()) {
+    if (!game.isPaused() && !game.isOver()) {
+      timer.increment()
+    }
+
+    timerElement.innerHTML = showTimer(timer.hour(), timer.minute(), timer.second())
   }
 }
 
-const keyDown = (event: KeyboardEvent) => {
+function setupKeyDown(event: KeyboardEvent) {
   if (event.code === 'Escape') {
-    isGameOver = !isGameOver
+    game.over()
 
     clearInterval(gameInterval)
     clearInterval(timerInterval)
     initTheGame()
   }
 
-  if (!isGameOver) {
+  if (!game.isOver()) {
     if (event.code === 'Space') {
-      isGamePaused = !isGamePaused
+      game.togglePause()
     }
 
-    if (!isGamePaused) {
-      if (event.code === 'ArrowLeft' && oldDirection !== 'ArrowRight') {
-        newDirection = event.code
-        startTheGame()
-      } else if (event.code === 'ArrowRight' && oldDirection !== 'ArrowLeft') {
-        newDirection = event.code
-        startTheGame()
-      } else if (event.code === 'ArrowUp' && oldDirection !== 'ArrowDown') {
-        newDirection = event.code
-        startTheGame()
-      } else if (event.code === 'ArrowDown' && oldDirection !== 'ArrowUp') {
-        newDirection = event.code
-        startTheGame()
+    if (!game.isPaused()) {
+      if (event.code === 'ArrowLeft') {
+        snake.newDirection(event.code)
+        game.start()
+      } else if (event.code === 'ArrowRight') {
+        snake.newDirection(event.code)
+        game.start()
+      } else if (event.code === 'ArrowUp') {
+        snake.newDirection(event.code)
+        game.start()
+      } else if (event.code === 'ArrowDown') {
+        snake.newDirection(event.code)
+        game.start()
       }
     }
   }
 }
 
-function timer() {
-  if (isGameStarted) {
-    if (!isGamePaused && !isGameOver) {
-      time = time + 1
+function setupInputsAndSelects() {
+  $$('input, select').forEach((element: Element) => {
+    const elementId = $<HTMLInputOrSelectElement>(`#${element.id}`)
+    const value = localStorage.getItem(element.id)
+
+    if (value) {
+      elementId.value = value
     }
 
-    timerElement.innerHTML = showTimer(time)
+    elementId.addEventListener('input', saveValue)
+    elementId.addEventListener('input', changeTitle)
+  })
+
+  function saveValue(event: Event) {
+    const target = event.target as HTMLInputOrSelectElement
+    localStorage.setItem(target.id, target.value)
+  }
+
+  function changeTitle(event: Event) {
+    const target = event.target as HTMLInputOrSelectElement
+    $<HTMLInputOrSelectElement>(`#${target.id}`).title = target.value
   }
 }
 
-function createPause() {
-  const text = 'Pause'
-
-  gameField.fillStyle = '#fff'
-  gameField.font = `bold ${squareSize * 2}px eightiesFont`
-  gameField.textBaseline = 'middle'
-  gameField.fillText(text, (gameFieldSize / 2) - (gameField.measureText(text).width / 2), (gameFieldSize / 2))
-}
-
-function createGameOver() {
-  const text = 'Game Over'
-
-  gameField.fillStyle = '#fff'
-  gameField.font = `bold ${squareSize * 2}px eightiesFont`
-  gameField.textBaseline = 'middle'
-  gameField.fillText(text, (gameFieldSize / 2) - (gameField.measureText(text).width / 2), (gameFieldSize / 2))
-}
-
 function initTheGame() {
-  isGameStarted = false
-  snake = []
-  time = 0
-  timerElement.innerHTML = showTimer(time)
-  score = 0
-  scoreElement.innerHTML = scoreHtml
-  snakeX = squareSize / 2
-  snakeY = squareSize / 2
-  oldDirection = ''
-  newDirection = ''
-  tailSizeSnake = tailSizeSnakeInit
+  const tailSizeSnake = Number($<HTMLInputElement>('#tailSizeSnake').value)
+  const speed = Number($<HTMLInputElement>('#speed').value)
+  const center = numberOfSquare / 2
 
-  timerInterval = setInterval(timer, oneSecond)
-  gameInterval = setInterval(game, speed)
+  apple = new Apple()
+  snake = new Snake(center, center, tailSizeSnake)
+  score = new Score(0)
+  timer = new Timer(0)
+  game = new Game(numberOfSquare, apple, snake, score)
+  apple.changeTheCoordinates(game.randomCoordinate(), game.randomCoordinate())
+
+  highScoreElement.innerHTML = showHighScore()
+  scoreElement.innerHTML = showScore(score.total())
+  timerElement.innerHTML = showTimer(timer.hour(), timer.minute(), timer.second())
+
+  const oneSecond = 1000
+  timerInterval = setInterval(currentTimer, oneSecond)
+  gameInterval = setInterval(currentGame, speed)
+  setupInputsAndSelects()
 }
 
-window.addEventListener('keydown', keyDown)
-window.addEventListener('load', load)
-initTheGame()
+window.addEventListener('keydown', setupKeyDown)
+window.addEventListener('load', initTheGame)

@@ -2,7 +2,9 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:import/recommended",
+    "plugin:import/typescript"
   ],
   "env": {
     "browser": true,
@@ -64,6 +66,18 @@
     "sort-keys": "error",
     "space-before-blocks": "error",
     "space-infix-ops": "error",
-    "yoda": "error"
+    "yoda": "error",
+    "import/newline-after-import": "error",
+    "import/no-anonymous-default-export": "off",
+    "import/no-extraneous-dependencies": "error",
+    "import/no-mutable-exports": "error",
+    "import/order": [
+      "warn",
+      {
+        "groups": [["builtin", "external"], ["internal", "parent", "sibling", "index", "object", "type"]],
+        "newlines-between": "always",
+        "alphabetize": { "order": "asc", "caseInsensitive": true }
+      }
+    ]
   }
 }
