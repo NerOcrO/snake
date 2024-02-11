@@ -3,6 +3,7 @@ import { Game } from './entities/Game'
 import { Score } from './entities/Score'
 import { Snake } from './entities/Snake'
 import { Timer } from './entities/Timer'
+import { LocalStorageScoreRepository } from './gateways/LocalStorageScoreRepository'
 import { $, $$ } from './utils'
 import { createApple } from './web-ui/apple'
 import { createBackground } from './web-ui/background'
@@ -21,6 +22,7 @@ const timerElement = $<HTMLSpanElement>('#timer')
 const gameField = $<HTMLCanvasElement>('canvas').getContext('2d') as CanvasRenderingContext2D
 const numberOfSquare = Number($<HTMLInputElement>('#numberOfSquare').value)
 const marginSize = 2
+const localStorageScoreRepository = new LocalStorageScoreRepository()
 
 let game: Game
 let apple: Apple
@@ -44,13 +46,13 @@ function currentGame() {
     if (game.isStarted()) {
       snake.move()
       snake.deadWhenItEatsItself()
-      game.overWhenTheSnakeIsDead()
       game.overWhenTheWallIsTouched()
+      game.overWhenTheSnakeIsDead()
 
       if (!game.isOver()) {
         game.isTheSnakeEatTheApple()
 
-        highScoreElement.innerHTML = showHighScore()
+        highScoreElement.innerHTML = showHighScore(localStorageScoreRepository.load())
         scoreElement.innerHTML = showScore(score.total())
       }
     }
@@ -132,10 +134,10 @@ function initTheGame() {
   snake = new Snake(center, center, tailSizeSnake)
   score = new Score(0)
   timer = new Timer(0)
-  game = new Game(numberOfSquare, apple, snake, score)
+  game = new Game(localStorageScoreRepository, numberOfSquare, apple, snake, score)
   apple.changeTheCoordinates(game.randomCoordinate(), game.randomCoordinate())
 
-  highScoreElement.innerHTML = showHighScore()
+  highScoreElement.innerHTML = showHighScore(localStorageScoreRepository.load())
   scoreElement.innerHTML = showScore(score.total())
   timerElement.innerHTML = showTimer(timer.hour(), timer.minute(), timer.second())
 

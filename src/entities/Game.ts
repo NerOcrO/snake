@@ -1,7 +1,7 @@
 import { Apple } from './Apple'
 import { Score } from './Score'
+import { ScoreRepository } from './ScoreRepository'
 import { Snake } from './Snake'
-import { setHighScore } from '../web-ui/score'
 
 export class Game {
   private _isOver = false
@@ -11,6 +11,7 @@ export class Game {
   private readonly _y = 0
 
   constructor(
+    private readonly scoreRepository: ScoreRepository,
     private readonly _numberOfSquare: number,
     private readonly apple: Apple,
     private readonly snake: Snake,
@@ -80,7 +81,7 @@ export class Game {
 
   overWhenTheSnakeIsDead() {
     if (this.snake.isDead()) {
-      setHighScore(this.score.total())
+      this.scoreRepository.save(this.score.total())
       this.over()
     }
   }
@@ -92,7 +93,7 @@ export class Game {
       this.snake.head().y < 0 ||
       this.snake.head().y > this._numberOfSquare - 1
     ) {
-      this.over()
+      this.snake.dead()
     }
   }
 

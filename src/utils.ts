@@ -1,4 +1,4 @@
-export function $<T>(selector: string) {
+export function $<T>(selector: string): T {
   return document.querySelector(selector) as T
 }
 

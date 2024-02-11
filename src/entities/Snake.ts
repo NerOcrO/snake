@@ -39,7 +39,7 @@ export class Snake {
   deadWhenItEatsItself() {
     this.body().slice(0, -4).forEach((partOfBodySnake: BodySnake) => {
       if (partOfBodySnake.x === this.head().x && partOfBodySnake.y === this.head().y) {
-        this._isDead = true
+        this.dead()
       }
     })
   }
@@ -77,5 +77,9 @@ export class Snake {
 
   isDead(): boolean {
     return this._isDead
+  }
+
+  dead() {
+    this._isDead = true
   }
 }
