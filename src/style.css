@@ -1,6 +1,6 @@
 @font-face {
   font-family: eightiesFont;
-  src: url("./prstart.ttf");
+  src: url("./prstart.woff2");
 }
 
 *, ::after, ::before {
