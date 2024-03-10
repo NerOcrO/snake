@@ -15,6 +15,7 @@
     "project": ["./tsconfig.json"],
     "sourceType": "module"
   },
+  "plugins": ["sort-keys-fix"],
   "rules": {
     "array-bracket-newline": "error",
     "array-bracket-spacing": "error",
@@ -63,7 +64,6 @@
     "quote-props": ["error", "as-needed"],
     "quotes": ["error", "single", { "avoidEscape": true }],
     "semi": ["error", "never"],
-    "sort-keys": "error",
     "space-before-blocks": "error",
     "space-infix-ops": "error",
     "yoda": "error",
@@ -78,6 +78,7 @@
         "newlines-between": "always",
         "alphabetize": { "order": "asc", "caseInsensitive": true }
       }
-    ]
+    ],
+    "sort-keys-fix/sort-keys-fix": "error"
   }
 }
